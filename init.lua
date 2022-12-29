@@ -1,18 +1,12 @@
 require('keymaps')
 
-local present = function(a, b)
-    print("A: ", a)
-    print("B: ", b)
-
-    print("Hello from NVIM")
-end
-
-present(1, 2)
-
-vim.o.relativenumber = true
+vim.g.mapleader = " "
 
 local set = vim.o
 
+set.relativenumber = true
+set.number = true
+set.showmatch = true
 set.tabstop = 8
 set.softtabstop = 0
 set.expandtab = true
@@ -20,107 +14,166 @@ set.shiftwidth = 4
 set.swapfile = false
 set.cursorline = true
 set.spell = false
-
+set.cc = 80
+set.ttyfast = true
 
 require('packer').startup(function(use)
-    use 'wbthomason/packer.nvim' -- this is essential.
-    use 'preservim/nerdtree'
-    use 'Mofiqul/dracula.nvim'
-    use 'williamboman/mason.nvim'
-    use 'neovim/nvim-lspconfig' -- Configurations for Nvim LSP
-end)
+    use 'wbthomason/packer.nvim'
 
--- Color schema
-vim.cmd [[colorscheme dracula]]
+    use {
+        'nvim-telescope/telescope.nvim', tag = '0.1.0',
+        -- or                            , branch = '0.1.x',
+        requires = { { 'nvim-lua/plenary.nvim' } }
+    }
+    use({ 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' })
 
-vim.lsp.start({
-    name = 'my-server-name',
-    cmd = { 'name-of-language-server-executable' },
-    root_dir = vim.fs.dirname(vim.fs.find({ 'setup.py', 'pyproject.toml' }, { upward = true })[1]),
-})
-
--- Mason
-require('mason').setup()
-
-
-vim.lsp.set_log_level("debug")
-
--- LSP mappings
--- Mappings.
--- See `:help vim.diagnostic.*` for documentation on any of the below functions
-local opts = { noremap = true, silent = true }
-vim.keymap.set('n', '<space>e', vim.diagnostic.open_float, opts)
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
-vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, opts)
-
--- Use an on_attach function to only map the following keys
--- after the language server attaches to the current buffer
-local on_attach = function(client, bufnr)
-    print('on-attach')
-    -- Enable completion triggered by <c-x><c-o>
-    vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
-
-    -- Mappings.
-    -- See `:help vim.lsp.*` for documentation on any of the below functions
-    local bufopts = { noremap = true, silent = true, buffer = bufnr }
-    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
-    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
-    vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
-    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
-    vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)
-    vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, bufopts)
-    vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
-    vim.keymap.set('n', '<space>wl', function()
-        print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-    end, bufopts)
-    vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, bufopts)
-    vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, bufopts)
-    vim.keymap.set('n', '<space>ca', vim.lsp.buf.code_action, bufopts)
-    vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
-    vim.keymap.set('n', '<space>f', function() vim.lsp.buf.format { async = true } end, bufopts)
-    print('ex')
-end
-
-local lsp_flags = {
-    -- This is the default in Nvim 0.7+
-    debounce_text_changes = 150,
+    use {
+    'numToStr/Comment.nvim',
+    config = function()
+        require('Comment').setup()
+    end
 }
 
-require('vim.lsp.log').set_format_func(vim.inspect)
+    use({ 'mbbill/undotree' })
+
+    use({
+        'rose-pine/neovim',
+        as = 'rose-pine',
+        config = function()
+            vim.cmd('colorscheme rose-pine')
+        end
+    })
 
 
--- Lua lsp
-require('lspconfig')['sumneko_lua'].setup {
-    on_attach = on_attach,
-    flags = lsp_flags,
-    settings = {
-        Lua = {
-            runtime = {
-                -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
-                version = '5.1',
-            },
-            diagnostics = {
-                -- Get the language server to recognize the `vim` global
-                globals = { 'vim' },
-            },
-            workspace = {
-                -- Make the server aware of Neovim runtime files
-                library = vim.api.nvim_get_runtime_file("", true),
-            },
-            -- Do not send telemetry data containing a randomized but unique identifier
-            telemetry = {
-                enable = false,
+    use 'Mofiqul/dracula.nvim'
+    use 'github/copilot.vim'
+
+    use {
+        'nvim-tree/nvim-tree.lua',
+        requires = {
+            'nvim-tree/nvim-web-devicons', -- optional, for file icons
+        },
+        tag = 'nightly' -- optional, updated every week. (see issue #1193)
+    }
+
+
+
+use {
+  'nvim-lualine/lualine.nvim',
+  requires = { 'kyazdani42/nvim-web-devicons', opt = true }
+}
+
+    use {
+        'VonHeikemen/lsp-zero.nvim',
+        requires = {
+            -- LSP Support
+            { 'neovim/nvim-lspconfig' },
+            { 'williamboman/mason.nvim' },
+            { 'williamboman/mason-lspconfig.nvim' },
+
+            -- Autocompletion
+            { 'hrsh7th/nvim-cmp' },
+            { 'hrsh7th/cmp-buffer' },
+            { 'hrsh7th/cmp-path' },
+            { 'saadparwaiz1/cmp_luasnip' },
+            { 'hrsh7th/cmp-nvim-lsp' },
+            { 'hrsh7th/cmp-nvim-lua' },
+
+            -- Snippets
+            { 'L3MON4D3/LuaSnip' },
+            { 'rafamadriz/friendly-snippets' },
+        }
+    }
+end)
+
+-- Theme
+vim.cmd [[colorscheme dracula]]
+
+-- LSP
+-- setup mason plugin
+require('mason').setup()
+require('mason-lspconfig').setup({
+    ensure_installed = { "sumneko_lua", "phpactor", "pyright" , "jsonls", "dockerls", "marksman"}
+})
+
+require('lspconfig').sumneko_lua.setup {}
+require('lspconfig').phpactor.setup {}
+
+
+-- examples for your init.lua
+
+-- disable netrw at the very start of your init.lua (strongly advised)
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
+-- set termguicolors to enable highlight groups
+vim.opt.termguicolors = true
+--require('undotree').setup()
+
+-- empty setup using defaults
+require("nvim-tree").setup()
+
+-- OR setup with some options
+require("nvim-tree").setup({
+    sort_by = "case_sensitive",
+    view = {
+        adaptive_size = true,
+        mappings = {
+            list = {
+                { key = "u", action = "dir_up" },
             },
         },
     },
-}
+    renderer = {
+        group_empty = true,
+    },
+    filters = {
+        dotfiles = true,
+    },
+})
 
-print(_VERSION)
+-- Search
+vim.opt.path:remove "/usr/include"
+vim.opt.path:append "**"
+-- vim.cmd [[set path=.,,,$PWD/**]] -- Alternatively set the path
 
-local f = function(a, b)
-end
+vim.opt.wildignorecase = true
+vim.opt.wildignore:append "**/vendor/*"
+vim.opt.wildignore:append "**/.git/*"
 
-f()
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 
-vim.lsp.set_log_level("debug")
+-- Telescope
+local builtin = require('telescope.builtin')
+vim.keymap.set('n', '<leader>pf', builtin.find_files, {})
+vim.keymap.set('n', '<C-p>', builtin.git_files, {})
+vim.keymap.set('n', '<leader>ps', function()
+    builtin.grep_string({ search = vim.fn.input("Grep > ") })
+end)
+
+-- Comment
+require('Comment').setup()
+
+
+vim.opt.hlsearch = false
+vim.opt.incsearch = true
+
+vim.opt.termguicolors = true
+vim.opt.scrolloff = 999
+
+vim.opt.signcolumn = "yes"
+vim.opt.isfname:append("@-@")
+
+vim.opt.updatetime = 50
+
+vim.opt.colorcolumn = "180"
+
+vim.opt.smartindent = true
+
+vim.opt.wrap = false
+
+vim.opt.hlsearch = false
+vim.opt.incsearch = true
+
+require('lualine').setup()
