@@ -1,4 +1,4 @@
-print("--COLORS--");
+print("after/plugin/colors.lua")
 
 require('rose-pine').setup({
     disable_background = true

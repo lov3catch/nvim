@@ -1,4 +1,4 @@
-print('lsp config')
+print('lua/config/lsp.lua')
 
 local fn = vim.fn
 local api = vim.api

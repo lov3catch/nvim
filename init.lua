@@ -1,3 +1,5 @@
+print('init.lua')
+
 require('keymaps')
 
 vim.g.mapleader = " "
@@ -14,8 +16,8 @@ set.shiftwidth = 4
 set.swapfile = false
 set.cursorline = true
 set.spell = false
-        set.cc = 80
-  set.ttyfast = true
+set.cc = 80
+set.ttyfast = true
 
 require('packer').startup(function(use)
     use 'wbthomason/packer.nvim'

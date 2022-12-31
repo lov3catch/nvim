@@ -1,3 +1,4 @@
+print('lua/config/nvim-cmp.lua')
 -- Setup nvim-cmp.
 local cmp = require("cmp")
 local lspkind = require("lspkind")
