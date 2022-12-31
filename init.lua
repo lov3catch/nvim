@@ -14,8 +14,8 @@ set.shiftwidth = 4
 set.swapfile = false
 set.cursorline = true
 set.spell = false
-set.cc = 80
-set.ttyfast = true
+        set.cc = 80
+  set.ttyfast = true
 
 require('packer').startup(function(use)
     use 'wbthomason/packer.nvim'
@@ -28,11 +28,11 @@ require('packer').startup(function(use)
     use({ 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' })
 
     use {
-    'numToStr/Comment.nvim',
-    config = function()
-        require('Comment').setup()
-    end
-}
+        'numToStr/Comment.nvim',
+        config = function()
+            require('Comment').setup()
+        end
+    }
 
     use({ 'mbbill/undotree' })
 
@@ -58,10 +58,10 @@ require('packer').startup(function(use)
 
 
 
-use {
-  'nvim-lualine/lualine.nvim',
-  requires = { 'kyazdani42/nvim-web-devicons', opt = true }
-}
+    use {
+        'nvim-lualine/lualine.nvim',
+        requires = { 'kyazdani42/nvim-web-devicons', opt = true }
+    }
 
     use {
         'VonHeikemen/lsp-zero.nvim',
